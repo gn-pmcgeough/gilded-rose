@@ -24,51 +24,31 @@ class GildedRose
 
     public function tick()
     {
-        if ($this->name != 'Aged Brie' and $this->name != 'Backstage passes to a TAFKAL80ETC concert') {
-            if ($this->quality > 0) {
-                if ($this->name != 'Sulfuras, Hand of Ragnaros') {
-                    $this->quality = $this->quality - 1;
-                }
-            }
-        } else {
-            if ($this->quality < 50) {
-                $this->quality = $this->quality + 1;
-
-                if ($this->name == 'Backstage passes to a TAFKAL80ETC concert') {
-                    if ($this->sellIn < 11) {
-                        if ($this->quality < 50) {
-                            $this->quality = $this->quality + 1;
-                        }
-                    }
-                    if ($this->sellIn < 6) {
-                        if ($this->quality < 50) {
-                            $this->quality = $this->quality + 1;
-                        }
-                    }
-                }
-            }
+        if ($this->name === 'Sulfuras, Hand of Ragnaros') {
+            return;
         }
 
-        if ($this->name != 'Sulfuras, Hand of Ragnaros') {
-            $this->sellIn = $this->sellIn - 1;
-        }
+        $this->sellIn--;
 
-        if ($this->sellIn < 0) {
-            if ($this->name != 'Aged Brie') {
-                if ($this->name != 'Backstage passes to a TAFKAL80ETC concert') {
-                    if ($this->quality > 0) {
-                        if ($this->name != 'Sulfuras, Hand of Ragnaros') {
-                            $this->quality = $this->quality - 1;
-                        }
-                    }
-                } else {
-                    $this->quality = $this->quality - $this->quality;
-                }
+        if ($this->name === 'Aged Brie') {
+            $increase = $this->sellIn < 0 ? 2 : 1;
+            $this->quality = min(50, $this->quality + $increase);
+        } elseif ($this->name === 'Backstage passes to a TAFKAL80ETC concert') {
+            if ($this->sellIn < 0) {
+                $this->quality = 0;
+            } elseif ($this->sellIn < 5) {
+                $this->quality = min(50, $this->quality + 3);
+            } elseif ($this->sellIn < 10) {
+                $this->quality = min(50, $this->quality + 2);
             } else {
-                if ($this->quality < 50) {
-                    $this->quality = $this->quality + 1;
-                }
+                $this->quality = min(50, $this->quality + 1);
             }
+        } elseif ($this->name === 'Conjured Mana Cake') {
+            $decrease = $this->sellIn < 0 ? 4 : 2;
+            $this->quality = max(0, $this->quality - $decrease);
+        } else {
+            $decrease = $this->sellIn < 0 ? 2 : 1;
+            $this->quality = max(0, $this->quality - $decrease);
         }
     }
 }
